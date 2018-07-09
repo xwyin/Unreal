@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "MyGameInstance.h"
 #include "GameFramework/Actor.h"
 #include "MyPlanets.generated.h"
 
@@ -22,6 +23,5 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-	void UpdatePlanetLocation();
 	
 };

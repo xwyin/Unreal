@@ -5,12 +5,14 @@
 #include "GenericPlatform/GenericPlatform.h"
 #include "HAL/PlatformFilemanager.h"
 #include "Containers/UnrealString.h"
+#include <sstream>	
+#include <string>
 
 
 IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
 
-//This function reads the .sa file and return info to a map
-TArray<FSatInfoEphemeris> UMySatCoord::LoadCoord(FString path) {
+//This function reads the .sa file and return info as a map
+void UMySatCoord::LoadCoord(FString path) {
 
 	TArray<FString> arr;
 	if (PlatformFile.FileExists(*path)) {
@@ -18,11 +20,9 @@ TArray<FSatInfoEphemeris> UMySatCoord::LoadCoord(FString path) {
 	}
 
 	bool startParse = false;
-	int8 tempArrayIndex;
 	FString satName = "NEOSSAT";
-	FSatInfoEphemeris inputCoord; //Coordinates read from file directly, in ephemeris format
-	//FSatInfo satCoord; //Processed coordinates
-	TMap<FString, FSatInfoEphemeris> satInfo;
+	FSatInfo inputCoord; 
+	TMap<FString, FSatInfo> satDatabase; //final map where information of all satellites are stored
 
 	for (int32 i = 0; i < arr.Num(); i++) {
 		if (arr[i] == "BEGIN Satellite") {
@@ -38,30 +38,68 @@ TArray<FSatInfoEphemeris> UMySatCoord::LoadCoord(FString path) {
 		}
 
 		if (startParse && !arr[i].IsEmpty()) {
-
-			tempArrayIndex = 0;
-
-			for (char c : arr[i]) {
-
-				switch (tempArrayIndex) {
-					case 0: inputCoord.eTime += c;
-						break;
-					case 1: inputCoord.ePosX += c;
-						break;
-					case 2: inputCoord.ePosY += c;
-						break;
-					case 3: inputCoord.ePosZ += c;
-						break;
-				}
-				tempArrayIndex++;
-			}
-
-			satInfo.Add(satName, inputCoord);
-
+			InputCoord(inputCoord,arr[i]);
 		}
 	}
-	
-	return satInfo.FindRef(satName);
+	satDatabase.Add(satName, inputCoord);
+	satDatabase.Find(satName)->PrintSat();
 }
 
-//function to process coordinates
+//This function parses time and position information of satellite
+void UMySatCoord::InputCoord(FSatInfo inputCoord, FString lineI) {
+	int8 arrayIndex = 0;
+	FString tempString;
+	float tempFloat;
+	FVector satPosition;
+	float satTimeStamp = 0.0f;
+	
+	for (char c : lineI) {
+		if (c != ' ') {
+			tempString += c;
+			//UE_LOG(LogTemp, Warning, TEXT("TempString %s"), *tempString);
+		}
+		else {
+			tempFloat = StrToFloat(tempString);
+			switch (arrayIndex) {
+			case 0:
+				satTimeStamp = tempFloat;
+				UE_LOG(LogTemp, Warning, TEXT("SaveTime %f"), satTimeStamp);
+				break;
+			case 1:
+				satPosition.X = ProcessCoord(tempFloat);
+				UE_LOG(LogTemp, Warning, TEXT("SaveX %f"), satPosition.X);
+				break;
+			case 2:
+				satPosition.Y = ProcessCoord(tempFloat);
+				UE_LOG(LogTemp, Warning, TEXT("SaveY %f"), satPosition.Y);
+				break;
+			case 3:
+				satPosition.Z = ProcessCoord(tempFloat);
+				UE_LOG(LogTemp, Warning, TEXT("SaveZ %f"), satPosition.Z);
+				break;
+			default:
+				inputCoord.satInfo.Add(satTimeStamp, satPosition);
+				break;
+			}
+			arrayIndex++;
+			tempString = FString("");
+		}
+	}
+}
+
+//This function converts exponentials to float
+float UMySatCoord::StrToFloat(FString strNum) {
+	float floatNum;
+
+	std::string stdSciNum(TCHAR_TO_UTF8(*strNum));
+	std::stringstream ss(stdSciNum);
+
+	ss >> floatNum;
+	return floatNum;
+}
+
+//This function scales down the Ephemeris Coordinates
+float UMySatCoord::ProcessCoord(float preProcess) {
+	return preProcess /= 12000.0f;
+}
+
