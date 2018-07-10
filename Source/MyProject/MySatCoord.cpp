@@ -13,7 +13,6 @@ IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
 
 //This function reads the .sa file and return info as a map
 void UMySatCoord::LoadCoord(FString path) {
-
 	TArray<FString> arr;
 	if (PlatformFile.FileExists(*path)) {
 		FFileHelper::LoadFileToStringArray(arr, *path);
@@ -42,11 +41,12 @@ void UMySatCoord::LoadCoord(FString path) {
 		}
 	}
 	satDatabase.Add(satName, inputCoord);
+	UE_LOG(LogTemp, Warning, TEXT("This many sat: %d"), satDatabase.Num());
 	satDatabase.Find(satName)->PrintSat();
 }
 
 //This function parses time and position information of satellite
-void UMySatCoord::InputCoord(FSatInfo inputCoord, FString lineI) {
+void UMySatCoord::InputCoord(FSatInfo &inputCoord, FString lineI) {
 	int8 arrayIndex = 0;
 	FString tempString;
 	float tempFloat;
@@ -63,21 +63,22 @@ void UMySatCoord::InputCoord(FSatInfo inputCoord, FString lineI) {
 			switch (arrayIndex) {
 			case 0:
 				satTimeStamp = tempFloat;
-				UE_LOG(LogTemp, Warning, TEXT("SaveTime %f"), satTimeStamp);
+				//UE_LOG(LogTemp, Warning, TEXT("SaveTime %f"), satTimeStamp);
 				break;
 			case 1:
 				satPosition.X = ProcessCoord(tempFloat);
-				UE_LOG(LogTemp, Warning, TEXT("SaveX %f"), satPosition.X);
+				//UE_LOG(LogTemp, Warning, TEXT("SaveX %f"), satPosition.X);
 				break;
 			case 2:
 				satPosition.Y = ProcessCoord(tempFloat);
-				UE_LOG(LogTemp, Warning, TEXT("SaveY %f"), satPosition.Y);
+				//UE_LOG(LogTemp, Warning, TEXT("SaveY %f"), satPosition.Y);
 				break;
 			case 3:
 				satPosition.Z = ProcessCoord(tempFloat);
-				UE_LOG(LogTemp, Warning, TEXT("SaveZ %f"), satPosition.Z);
+				//UE_LOG(LogTemp, Warning, TEXT("SaveZ %f"), satPosition.Z);
 				break;
 			default:
+				//UE_LOG(LogTemp, Warning, TEXT("Add"));
 				inputCoord.satInfo.Add(satTimeStamp, satPosition);
 				break;
 			}

@@ -15,14 +15,12 @@ struct FSatInfo
 	GENERATED_BODY()
 
 		UPROPERTY()
-			TMap<uint32,FVector> satInfo; //time and coordinate
+			TMap<float,FVector> satInfo; //time and coordinate
 
 			//Just a function to print the map to check if map was constructed properly
 			void PrintSat(){
-				UE_LOG(LogTemp, Warning, TEXT("Called Print"));
 				for (auto It = satInfo.CreateConstIterator(); It; ++It)
 				{
-					UE_LOG(LogTemp, Warning, TEXT("InsidePrint"));
 					UE_LOG(LogTemp, Warning, TEXT("Time: %f"), It.Key()); 
 					UE_LOG(LogTemp, Warning, TEXT("Position X: %f"), It.Value().X); 
 					UE_LOG(LogTemp, Warning, TEXT("Position Y: %f"), It.Value().Y);
@@ -43,7 +41,7 @@ protected:
 	
 	UFUNCTION(BlueprintCallable)
 		void LoadCoord(FString path);
-		void InputCoord(FSatInfo inputCoord, FString lineI);
+		void InputCoord(FSatInfo &inputCoord, FString lineI);
 		float StrToFloat(FString sciNum);
 		float ProcessCoord(float preProcess);
 
