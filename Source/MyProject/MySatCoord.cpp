@@ -12,7 +12,7 @@
 IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
 
 //This function reads the .sa file and return info as a map
-void UMySatCoord::LoadCoord(FString path) {
+TArray<FVector> UMySatCoord::LoadCoord(FString path) {
 	TArray<FString> arr;
 	if (PlatformFile.FileExists(*path)) {
 		FFileHelper::LoadFileToStringArray(arr, *path);
@@ -20,8 +20,8 @@ void UMySatCoord::LoadCoord(FString path) {
 
 	bool startParse = false;
 	FString satName = "NEOSSAT";
-	FSatInfo inputCoord; 
-	TMap<FString, FSatInfo> satDatabase; //final map where information of all satellites are stored
+	TArray<FVector> inputCoord; 
+	TMap<FString, TArray<FVector>> satDatabase; //final map where information of all satellites are stored
 
 	for (int32 i = 0; i < arr.Num(); i++) {
 		if (arr[i] == "BEGIN Satellite") {
@@ -36,35 +36,30 @@ void UMySatCoord::LoadCoord(FString path) {
 			break;
 		}
 
-		if (startParse && !arr[i].IsEmpty()) {
+		if (startParse) {
 			InputCoord(inputCoord,arr[i]);
 		}
 	}
 	satDatabase.Add(satName, inputCoord);
-	UE_LOG(LogTemp, Warning, TEXT("This many sat: %d"), satDatabase.Num());
-	satDatabase.Find(satName)->PrintSat();
+	//UE_LOG(LogTemp, Warning, TEXT("This many sat: %d"), satDatabase.Num());
+	UE_LOG(LogTemp, Warning, TEXT("This many records: %d"), inputCoord.Num());
+	return *satDatabase.Find(satName);
 }
 
 //This function parses time and position information of satellite
-void UMySatCoord::InputCoord(FSatInfo &inputCoord, FString lineI) {
+void UMySatCoord::InputCoord(TArray<FVector> &inputCoord, FString lineI) {
 	int8 arrayIndex = 0;
 	FString tempString;
 	float tempFloat;
 	FVector satPosition;
-	float satTimeStamp = 0.0f;
 	
 	for (char c : lineI) {
 		if (c != ' ') {
 			tempString += c;
-			//UE_LOG(LogTemp, Warning, TEXT("TempString %s"), *tempString);
 		}
 		else {
 			tempFloat = StrToFloat(tempString);
 			switch (arrayIndex) {
-			case 0:
-				satTimeStamp = tempFloat;
-				//UE_LOG(LogTemp, Warning, TEXT("SaveTime %f"), satTimeStamp);
-				break;
 			case 1:
 				satPosition.X = ProcessCoord(tempFloat);
 				//UE_LOG(LogTemp, Warning, TEXT("SaveX %f"), satPosition.X);
@@ -77,9 +72,8 @@ void UMySatCoord::InputCoord(FSatInfo &inputCoord, FString lineI) {
 				satPosition.Z = ProcessCoord(tempFloat);
 				//UE_LOG(LogTemp, Warning, TEXT("SaveZ %f"), satPosition.Z);
 				break;
-			default:
-				//UE_LOG(LogTemp, Warning, TEXT("Add"));
-				inputCoord.satInfo.Add(satTimeStamp, satPosition);
+			case 4:
+				inputCoord.Add(satPosition);
 				break;
 			}
 			arrayIndex++;
