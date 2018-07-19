@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "MyGameInstance.h"
+#include "MySatCoord.h"
+#include "Public/TimerManager.h"
 #include "GameFramework/Actor.h"
 #include "MyPlanets.generated.h"
 
@@ -15,10 +17,17 @@ class MYPROJECT_API AMyPlanets : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AMyPlanets();
-
+	float timerRate = 1.0f;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	
+	TArray<FVector> satDatabase;
+	float i = 0.0f; 
+	float alpha;
+	FVector newLocation;
+	FTimerHandle timerHandle;
+	void UpdateSatLocation();
 
 public:	
 	// Called every frame

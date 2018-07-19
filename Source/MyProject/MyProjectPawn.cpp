@@ -41,11 +41,18 @@ AMyProjectPawn::AMyProjectPawn()
 	Camera->bUsePawnControlRotation = false; // Don't rotate camera with controller
 
 	// Set handling parameters
+	/*
 	Acceleration = 500.f;
 	TurnSpeed = 50.f;
 	MaxSpeed = 4000.f;
 	MinSpeed = 500.f;
 	CurrentForwardSpeed = 500.f;
+	*/
+	CurrentForwardSpeed = 0.5f;
+	Acceleration = 1.0f;
+	TurnSpeed = 15.f;
+	MaxSpeed = 0.5f;
+	MinSpeed = 0.5f;
 }
 
 void AMyProjectPawn::Tick(float DeltaSeconds)

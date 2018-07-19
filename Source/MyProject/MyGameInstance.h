@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
-#include "MySatCoord.h"
 #include "MyGameInstance.generated.h"
 
 /**
@@ -16,10 +15,11 @@ class MYPROJECT_API UMyGameInstance : public UGameInstance
 	GENERATED_BODY()
 
 protected:
-		UMyGameInstance();
-		UMySatCoord* satDatabase;
+		
+		class UMySatCoord* satDatabase;
 
 public:
-		UMySatCoord* GetSatDatbase();
+		UMyGameInstance();
+		class UMySatCoord* GetSatDatabase();
 };
 

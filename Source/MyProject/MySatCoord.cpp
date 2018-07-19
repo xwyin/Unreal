@@ -42,7 +42,7 @@ TArray<FVector> UMySatCoord::LoadCoord(FString path) {
 	}
 	satDatabase.Add(satName, inputCoord);
 	//UE_LOG(LogTemp, Warning, TEXT("This many sat: %d"), satDatabase.Num());
-	UE_LOG(LogTemp, Warning, TEXT("This many records: %d"), inputCoord.Num());
+	//UE_LOG(LogTemp, Warning, TEXT("This many records: %d"), inputCoord.Num());
 	return *satDatabase.Find(satName);
 }
 
