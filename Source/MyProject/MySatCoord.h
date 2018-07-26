@@ -13,13 +13,13 @@ class MYPROJECT_API UMySatCoord : public UObject
 public:
 
 	UFUNCTION(BlueprintCallable)
-		TArray<FVector> LoadCoord(FString path);
+		TArray<FVector> SaveSatInfo(FString path);
 
 protected:
 
 	UFUNCTION(BlueprintCallable)
 		
-		void InputCoord(TArray<FVector> &inputCoord, FString lineI);
+		void ParseCoord(TArray<FVector> &inputCoord, FString lineI);
 		float StrToFloat(FString sciNum);
 		float ProcessCoord(float preProcess);
 

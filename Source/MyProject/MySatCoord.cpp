@@ -12,7 +12,7 @@
 IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
 
 //This function reads the .sa file and return info as a map
-TArray<FVector> UMySatCoord::LoadCoord(FString path) {
+TArray<FVector> UMySatCoord::SaveSatInfo(FString path) {
 	TArray<FString> arr;
 	if (PlatformFile.FileExists(*path)) {
 		FFileHelper::LoadFileToStringArray(arr, *path);
@@ -37,7 +37,7 @@ TArray<FVector> UMySatCoord::LoadCoord(FString path) {
 		}
 
 		if (startParse) {
-			InputCoord(inputCoord,arr[i]);
+			ParseCoord(inputCoord,arr[i]);
 		}
 	}
 	satDatabase.Add(satName, inputCoord);
@@ -47,7 +47,7 @@ TArray<FVector> UMySatCoord::LoadCoord(FString path) {
 }
 
 //This function parses time and position information of satellite
-void UMySatCoord::InputCoord(TArray<FVector> &inputCoord, FString lineI) {
+void UMySatCoord::ParseCoord(TArray<FVector> &inputCoord, FString lineI) {
 	int8 arrayIndex = 0;
 	FString tempString;
 	float tempFloat;
