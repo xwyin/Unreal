@@ -21,5 +21,6 @@ protected:
 public:
 		UMyGameInstance();
 		class UMySatCoord* GetSatDatabase();
+		float GetTimerRate();
 };
 

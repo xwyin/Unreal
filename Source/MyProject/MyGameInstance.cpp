@@ -13,3 +13,7 @@ UMySatCoord* UMyGameInstance::GetSatDatabase() {
 	return satDatabase;
 }
 
+float UMyGameInstance::GetTimerRate() {
+	return 10.0f;
+}
+

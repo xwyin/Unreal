@@ -17,7 +17,7 @@ class MYPROJECT_API AMySatellites : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AMySatellites();
-	float timerRate = 0.5f;
+	float timerRate;
 
 protected:
 	// Called when the game starts or when spawned
@@ -29,11 +29,8 @@ protected:
 	FVector newLocation;
 	FVector centerEarth = FVector(0.0f,0.0f,0.0f);
 	TArray<UStaticMeshComponent*> satMeshs;
+	FVector rotationAxis;
 
-	/*
-	FRotator satRot;
-	FRotator lookAtRot;
-	*/
 	FTimerHandle timerHandle;
 	void UpdateSatLocation();
 	

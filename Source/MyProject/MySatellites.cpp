@@ -22,9 +22,12 @@ void AMySatellites::BeginPlay()
 	UMyGameInstance* instance = Cast<UMyGameInstance>(GetGameInstance());
 	if (instance){
 		satDatabase = instance->GetSatDatabase()->SaveSatInfo("C:\\Users\\xyin\\Desktop\\testInput.sa");
+		timerRate = instance->GetTimerRate();
 	}
 	GetWorldTimerManager().SetTimer(timerHandle, this, &AMySatellites::UpdateSatLocation, timerRate, true, 0.0f);
 	
+	rotationAxis = FVector::CrossProduct(GetActorForwardVector(), satDatabase[0] - GetActorLocation());
+	rotationAxis.Normalize();
 	
 }
 
@@ -35,20 +38,23 @@ void AMySatellites::Tick(float DeltaTime)
 
 	alpha = GetWorldTimerManager().GetTimerElapsed(timerHandle) / timerRate;
 	newLocation = FMath::Lerp(satDatabase[i], satDatabase[i + 1], alpha);
+
+	FVector prevDir = centerEarth - GetActorLocation();
+	FVector newDir = centerEarth - newLocation;
+
+	FRotator preRot = centerEarth.Rotation() - GetActorRotation();
+	FRotator newRot = centerEarth.Rotation() - newLocation.Rotation();
+
+	preRot.Normalize();
+	newRot.Normalize();
+
+	prevDir.Normalize();
+	newDir.Normalize();
+
+	float angle = FMath::Acos((FVector::DotProduct(prevDir, newDir)));
+	FQuat quat(rotationAxis, angle);
+	AddActorLocalRotation(quat);
 	SetActorLocation(newLocation);
-	FRotator lookAtRot = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), centerEarth);
-	//FQuat testRot = FRotator(lookAtRot.Pitch, lookAtRot.Yaw, GetActorRotation().Roll).Quaternion();
-	
-	//FRotator satRot = FRotator(lookAtRot.Pitch, lookAtRot.Yaw, GetActorRotation().Roll);
-	FQuat delta = (lookAtRot - GetActorRotation()).Quaternion();
-	//FQuat testRot = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), centerEarth).Quaternion();
-	GetComponents<UStaticMeshComponent>(satMeshs);
-	UStaticMeshComponent* child = satMeshs[0];
-	FTransform  transform = this->GetTransform();
-	transform.ConcatenateRotation(delta);
-	//child->SetRelativeRotation(testRot);
-	SetActorTransform(transform);
-	//SetActorRotation(testRot);
 }
 
 void AMySatellites::UpdateSatLocation() {
