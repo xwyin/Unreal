@@ -21,6 +21,11 @@ void AMySun::BeginPlay()
 }
 
 // Called every frame
+/**
+* Equation for angle: One revolution of Earth is one day (86400s) and 360 degrees
+* Timer for trigger update satellite location is triggered at 60s interval for regular speed
+* TimerRate is used as a multiplier to control the speed of the scene/components
+*/
 void AMySun::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -28,7 +33,9 @@ void AMySun::Tick(float DeltaTime)
 	FVector radius = FVector(0, 2550, 0);
 	newLocation = FVector(0, 0, 0);
 
-	angle += 360.0f / 86400.0f * (60.0f / timerRate);
+	//angle += 360.0f / 86400.0f * (60.0f / timerRate);
+	angle += 0.25 / timerRate;
+
 	if (angle >= 360.f) {
 		angle = 0;
 	}

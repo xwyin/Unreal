@@ -2,14 +2,38 @@
 
 #include "MySatCoord.h"
 #include "Misc/FileHelper.h"
+#include "Misc/Paths.h"
 #include "GenericPlatform/GenericPlatform.h"
 #include "HAL/PlatformFilemanager.h"
+#include "HAL/FileManagerGeneric.h"
 #include "Containers/UnrealString.h"
 #include <sstream>	
 #include <string>
 
 
 IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
+
+void UMySatCoord::ReadAllFiles() {
+
+	TArray<FString> fileNames;
+	
+	FFileManagerGeneric fileManager;
+	fileManager.SetSandboxEnabled(true);
+	FString extension = FString("*.sa");
+	FString path = FPaths::Combine(FPaths::ProjectDir(),TEXT("STKOutputData"),extension);
+	
+	//UE_LOG(LogTemp, Warning, TEXT("FolderPath: %s"), *path);
+
+	fileManager.FindFiles(fileNames, *path, true, false);
+
+	//UE_LOG(LogTemp, Warning, TEXT("NumFiles: %d"), fileNames.Num());
+
+	for (int8 i = 0 ; i < fileNames.Num() ; i++) {
+		//UE_LOG(LogTemp, Warning, TEXT("FileName: %s"), *fileNames[i]);
+		SaveSatInfo
+	}
+	
+}
 
 //This function reads the .sa file and return info as a map
 TArray<FVector> UMySatCoord::SaveSatInfo(FString path) {

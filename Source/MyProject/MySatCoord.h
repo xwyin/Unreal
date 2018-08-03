@@ -14,10 +14,12 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 		TArray<FVector> SaveSatInfo(FString path);
+		void ReadAllFiles();
 
 protected:
 
 	UFUNCTION(BlueprintCallable)
+
 		
 		void ParseCoord(TArray<FVector> &inputCoord, FString lineI);
 		float StrToFloat(FString sciNum);

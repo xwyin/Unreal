@@ -22,6 +22,7 @@ void AMySatellites::BeginPlay()
 	UMyGameInstance* instance = Cast<UMyGameInstance>(GetGameInstance());
 	if (instance){
 		satDatabase = instance->GetSatDatabase()->SaveSatInfo("C:\\Users\\xyin\\Desktop\\testInput.sa");
+		instance->GetSatDatabase()->ReadAllFiles();
 		timerRate = instance->GetTimerRate();
 	}
 	GetWorldTimerManager().SetTimer(timerHandle, this, &AMySatellites::UpdateSatLocation, timerRate, true, 0.0f);
