@@ -12,15 +12,18 @@ class MYPROJECT_API UMySatCoord : public UObject
 	GENERATED_BODY()
 public:
 
+	TMap<FString, TArray<FVector>> satDatabase; //final map where information of all satellites are stored
+
 	UFUNCTION(BlueprintCallable)
-		TArray<FVector> SaveSatInfo(FString path);
+		
+		void SaveSatInfo(FString path);
 		void ReadAllFiles();
+		TArray<FVector> GetSpecificSatInfo(FString satname);
 
 protected:
 
 	UFUNCTION(BlueprintCallable)
 
-		
 		void ParseCoord(TArray<FVector> &inputCoord, FString lineI);
 		float StrToFloat(FString sciNum);
 		float ProcessCoord(float preProcess);

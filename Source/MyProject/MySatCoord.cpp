@@ -7,76 +7,80 @@
 #include "HAL/PlatformFilemanager.h"
 #include "HAL/FileManagerGeneric.h"
 #include "Containers/UnrealString.h"
-#include <sstream>	
+#include <sstream>    
 #include <string>
 
 
 IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
 
 void UMySatCoord::ReadAllFiles() {
-
-	TArray<FString> fileNames;
 	
+	UE_LOG(LogTemp, Warning, TEXT("Calling ReadAllFiles()"));
+	TArray<FString> fileNames;
+
 	FFileManagerGeneric fileManager;
 	fileManager.SetSandboxEnabled(true);
-	FString extension = FString("*.sa");
-	FString path = FPaths::Combine(FPaths::ProjectDir(),TEXT("STKOutputData"),extension);
-	
-	//UE_LOG(LogTemp, Warning, TEXT("FolderPath: %s"), *path);
+	FString identifier = FString("*.sa");
+	FString path = FPaths::Combine(FPaths::ProjectDir(), TEXT("STKOutputData"), identifier);
 
 	fileManager.FindFiles(fileNames, *path, true, false);
 
-	//UE_LOG(LogTemp, Warning, TEXT("NumFiles: %d"), fileNames.Num());
+	for (int8 i = 0; i < fileNames.Num(); i++) {
 
-	for (int8 i = 0 ; i < fileNames.Num() ; i++) {
-		//UE_LOG(LogTemp, Warning, TEXT("FileName: %s"), *fileNames[i]);
-		SaveSatInfo
+		FString fullPath = FPaths::Combine(FPaths::ProjectDir(), TEXT("STKOutputData"), fileNames[i]);
+		SaveSatInfo(fullPath);
 	}
-	
 }
 
-//This function reads the .sa file and return info as a map
-TArray<FVector> UMySatCoord::SaveSatInfo(FString path) {
+//This function reads the .sa file and save info to a map
+void UMySatCoord::SaveSatInfo(FString path) {
+
+	UE_LOG(LogTemp, Warning, TEXT("Calling SaveSatInfo()"));
+
 	TArray<FString> arr;
+	FString satName = FPaths::GetBaseFilename(path);
 	if (PlatformFile.FileExists(*path)) {
+		UE_LOG(LogTemp, Warning, TEXT("File exists"));
 		FFileHelper::LoadFileToStringArray(arr, *path);
 	}
 
 	bool startParse = false;
-	FString satName = "NEOSSAT";
-	TArray<FVector> inputCoord; 
-	TMap<FString, TArray<FVector>> satDatabase; //final map where information of all satellites are stored
+	TArray<FVector> inputCoord;
+	
 
 	for (int32 i = 0; i < arr.Num(); i++) {
-		if (arr[i] == "BEGIN Satellite") {
-			//to be implemented, parse name
-		}
-
+		
 		if (arr[i] == "EphemerisTimePosVel") {
 			startParse = true;
 		}
 
 		if (arr[i] == "END Ephemeris") {
 			break;
+			UE_LOG(LogTemp, Warning, TEXT("Done Parsing"));
 		}
 
 		if (startParse) {
-			ParseCoord(inputCoord,arr[i]);
+			ParseCoord(inputCoord, arr[i]);
 		}
 	}
+	UE_LOG(LogTemp, Warning, TEXT("Adding to DB"));
+
 	satDatabase.Add(satName, inputCoord);
-	//UE_LOG(LogTemp, Warning, TEXT("This many sat: %d"), satDatabase.Num());
-	//UE_LOG(LogTemp, Warning, TEXT("This many records: %d"), inputCoord.Num());
-	return *satDatabase.Find(satName);
+
+	UE_LOG(LogTemp, Warning, TEXT("This many sat: %d"), satDatabase.Num());
+	UE_LOG(LogTemp, Warning, TEXT("This many records: %d"), inputCoord.Num());
 }
 
 //This function parses time and position information of satellite
 void UMySatCoord::ParseCoord(TArray<FVector> &inputCoord, FString lineI) {
+
+	//UE_LOG(LogTemp, Warning, TEXT("Calling ParseCoord()"));
+
 	int8 arrayIndex = 0;
 	FString tempString;
 	float tempFloat;
 	FVector satPosition;
-	
+
 	for (char c : lineI) {
 		if (c != ' ') {
 			tempString += c;
@@ -98,6 +102,7 @@ void UMySatCoord::ParseCoord(TArray<FVector> &inputCoord, FString lineI) {
 				break;
 			case 4:
 				inputCoord.Add(satPosition);
+				//UE_LOG(LogTemp, Warning, TEXT("Add SatPosition"));
 				break;
 			}
 			arrayIndex++;
@@ -122,3 +127,6 @@ float UMySatCoord::ProcessCoord(float preProcess) {
 	return preProcess /= 12000.0f;
 }
 
+TArray<FVector> UMySatCoord::GetSpecificSatInfo(FString satName) {
+	return *satDatabase.Find(satName);
+}
