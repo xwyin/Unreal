@@ -10,12 +10,11 @@
 #include <sstream>    
 #include <string>
 
-
 IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
 
 void UMySatCoord::ReadAllFiles() {
 	
-	UE_LOG(LogTemp, Warning, TEXT("Calling ReadAllFiles()"));
+	//UE_LOG(LogTemp, Warning, TEXT("Calling ReadAllFiles()"));
 	TArray<FString> fileNames;
 
 	FFileManagerGeneric fileManager;
@@ -27,7 +26,8 @@ void UMySatCoord::ReadAllFiles() {
 
 	for (int8 i = 0; i < fileNames.Num(); i++) {
 
-		FString fullPath = FPaths::Combine(FPaths::ProjectDir(), TEXT("STKOutputData"), fileNames[i]);
+		FString fullPath = FPaths::Combine(FPaths::ProjectDir(), TEXT("STKOutputData/")) + fileNames[i];
+		//UE_LOG(LogTemp, Warning, TEXT("FullPath: %s"), *fullPath);
 		SaveSatInfo(fullPath);
 	}
 }
@@ -35,12 +35,13 @@ void UMySatCoord::ReadAllFiles() {
 //This function reads the .sa file and save info to a map
 void UMySatCoord::SaveSatInfo(FString path) {
 
-	UE_LOG(LogTemp, Warning, TEXT("Calling SaveSatInfo()"));
+	//UE_LOG(LogTemp, Warning, TEXT("Calling SaveSatInfo()"));
 
 	TArray<FString> arr;
 	FString satName = FPaths::GetBaseFilename(path);
+
 	if (PlatformFile.FileExists(*path)) {
-		UE_LOG(LogTemp, Warning, TEXT("File exists"));
+		//UE_LOG(LogTemp, Warning, TEXT("File exists"));
 		FFileHelper::LoadFileToStringArray(arr, *path);
 	}
 
@@ -56,19 +57,21 @@ void UMySatCoord::SaveSatInfo(FString path) {
 
 		if (arr[i] == "END Ephemeris") {
 			break;
-			UE_LOG(LogTemp, Warning, TEXT("Done Parsing"));
+			//UE_LOG(LogTemp, Warning, TEXT("Done Parsing"));
 		}
 
 		if (startParse) {
 			ParseCoord(inputCoord, arr[i]);
 		}
 	}
-	UE_LOG(LogTemp, Warning, TEXT("Adding to DB"));
-
 	satDatabase.Add(satName, inputCoord);
-
-	UE_LOG(LogTemp, Warning, TEXT("This many sat: %d"), satDatabase.Num());
-	UE_LOG(LogTemp, Warning, TEXT("This many records: %d"), inputCoord.Num());
+	/*
+	UE_LOG(LogTemp, Warning, TEXT("Size of InputCoord: %i"), inputCoord.Num());
+	UE_LOG(LogTemp, Warning, TEXT("This many sat: %i"), satDatabase.Num());
+	UE_LOG(LogTemp, Warning, TEXT("SatName: %s"), *satName);
+	checkf(!satDatabase.Find(satName), TEXT("Cannot find sat"));
+	checkf(inputCoord.Num(), TEXT("InputCoord Empty"));
+	*/
 }
 
 //This function parses time and position information of satellite
@@ -126,6 +129,7 @@ float UMySatCoord::StrToFloat(FString strNum) {
 float UMySatCoord::ProcessCoord(float preProcess) {
 	return preProcess /= 12000.0f;
 }
+
 
 TArray<FVector> UMySatCoord::GetSpecificSatInfo(FString satName) {
 	return *satDatabase.Find(satName);

@@ -22,7 +22,8 @@ void AMySatellites::BeginPlay()
 	UMyGameInstance* instance = Cast<UMyGameInstance>(GetGameInstance());
 	if (instance){
 		instance->GetSatDatabase()->ReadAllFiles();
-		//satDatabase = instance->GetSatDatabase()->GetSpecificSatInfo(GetName());
+		satDatabase = instance->GetSatDatabase()->GetSpecificSatInfo(GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Name of Actor: %s"), *GetName());
 		timerRate = instance->GetTimerRate();
 	}
 	GetWorldTimerManager().SetTimer(timerHandle, this, &AMySatellites::UpdateSatLocation, timerRate, true, 0.0f);
@@ -35,6 +36,7 @@ void AMySatellites::BeginPlay()
 // Called every frame
 void AMySatellites::Tick(float DeltaTime)
 {
+	
 	Super::Tick(DeltaTime);
 
 	alpha = GetWorldTimerManager().GetTimerElapsed(timerHandle) / timerRate;
@@ -56,6 +58,7 @@ void AMySatellites::Tick(float DeltaTime)
 	FQuat quat(rotationAxis, angle);
 	AddActorLocalRotation(quat);
 	SetActorLocation(newLocation);
+	
 }
 
 void AMySatellites::UpdateSatLocation() {

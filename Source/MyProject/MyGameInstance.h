@@ -15,7 +15,7 @@ class MYPROJECT_API UMyGameInstance : public UGameInstance
 	GENERATED_BODY()
 
 protected:
-		
+		UPROPERTY()
 		class UMySatCoord* satDatabase;
 
 public:
