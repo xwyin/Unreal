@@ -16,7 +16,7 @@ void AMySun::BeginPlay()
 	Super::BeginPlay();
 	UMyGameInstance* instance = Cast<UMyGameInstance>(GetGameInstance());
 	if (instance) {
-		timerRate = instance->GetTimerRate();
+		speedModifier = instance->GetSpeedModifier();
 	}
 }
 
@@ -31,10 +31,10 @@ void AMySun::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	FVector radius = FVector(0, 2550, 0);
-	newLocation = FVector(0, 0, 0);
+	FVector newLocation = FVector(0, 0, 0);
 
-	//angle += 360.0f / 86400.0f * (60.0f / timerRate);
-	angle += 0.25 / timerRate;
+	//angle += 360.0f / 86400.0f * (60.0f / speedModifier);
+	angle += 0.25 / speedModifier;
 
 	if (angle >= 360.f) {
 		angle = 0;

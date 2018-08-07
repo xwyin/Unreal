@@ -6,9 +6,6 @@
 #include "Engine/GameInstance.h"
 #include "MyGameInstance.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class MYPROJECT_API UMyGameInstance : public UGameInstance
 {
@@ -21,6 +18,8 @@ protected:
 public:
 		UMyGameInstance();
 		class UMySatCoord* GetSatDatabase();
-		float GetTimerRate();
+		float speedModifier = 0.05f; //default 60.0f for real time updates, scales down to fastforward
+		float GetSpeedModifier();
+		float SetSpeedModifier(float userInputModifier);
 };
 

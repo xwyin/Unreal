@@ -12,11 +12,11 @@
 
 IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
 
+/* This function picks up all the .sa files from folder "/Unreal/STKOutputData" 
+** Then calls SaveSatInfo() to save info for each file
+*/
 void UMySatCoord::ReadAllFiles() {
-	
-	//UE_LOG(LogTemp, Warning, TEXT("Calling ReadAllFiles()"));
 	TArray<FString> fileNames;
-
 	FFileManagerGeneric fileManager;
 	fileManager.SetSandboxEnabled(true);
 	FString identifier = FString("*.sa");
@@ -25,56 +25,46 @@ void UMySatCoord::ReadAllFiles() {
 	fileManager.FindFiles(fileNames, *path, true, false);
 
 	for (int8 i = 0; i < fileNames.Num(); i++) {
-
-		FString fullPath = FPaths::Combine(FPaths::ProjectDir(), TEXT("STKOutputData/")) + fileNames[i];
-		//UE_LOG(LogTemp, Warning, TEXT("FullPath: %s"), *fullPath);
+		FString fullPath = FPaths::Combine(FPaths::ProjectDir(), TEXT("STKOutputData/"), fileNames[i]);
 		SaveSatInfo(fullPath);
 	}
 }
 
-//This function reads the .sa file and save info to a map
+//This function reads the .sa file and save info to the map <Name,Coordinates>
 void UMySatCoord::SaveSatInfo(FString path) {
 
-	//UE_LOG(LogTemp, Warning, TEXT("Calling SaveSatInfo()"));
+	//UE_LOG(LogTemp, Warning, TEXT("FullPath: %s"), *path);
 
 	TArray<FString> arr;
 	FString satName = FPaths::GetBaseFilename(path);
+	bool startParse = false;
+	TArray<FVector> inputCoord;
 
 	if (PlatformFile.FileExists(*path)) {
 		//UE_LOG(LogTemp, Warning, TEXT("File exists"));
 		FFileHelper::LoadFileToStringArray(arr, *path);
 	}
-
-	bool startParse = false;
-	TArray<FVector> inputCoord;
 	
-
 	for (int32 i = 0; i < arr.Num(); i++) {
-		
 		if (arr[i] == "EphemerisTimePosVel") {
 			startParse = true;
 		}
-
 		if (arr[i] == "END Ephemeris") {
 			break;
 			//UE_LOG(LogTemp, Warning, TEXT("Done Parsing"));
 		}
-
 		if (startParse) {
 			ParseCoord(inputCoord, arr[i]);
 		}
 	}
 	satDatabase.Add(satName, inputCoord);
-	/*
-	UE_LOG(LogTemp, Warning, TEXT("Size of InputCoord: %i"), inputCoord.Num());
-	UE_LOG(LogTemp, Warning, TEXT("This many sat: %i"), satDatabase.Num());
-	UE_LOG(LogTemp, Warning, TEXT("SatName: %s"), *satName);
-	checkf(!satDatabase.Find(satName), TEXT("Cannot find sat"));
-	checkf(inputCoord.Num(), TEXT("InputCoord Empty"));
-	*/
+	
+	//UE_LOG(LogTemp, Warning, TEXT("Size of InputCoord: %i"), inputCoord.Num());
+	//UE_LOG(LogTemp, Warning, TEXT("This many sat: %i"), satDatabase.Num());
+	//UE_LOG(LogTemp, Warning, TEXT("SatName: %s"), *satName);
 }
 
-//This function parses time and position information of satellite
+//This function parses time and position info of satellite
 void UMySatCoord::ParseCoord(TArray<FVector> &inputCoord, FString lineI) {
 
 	//UE_LOG(LogTemp, Warning, TEXT("Calling ParseCoord()"));
@@ -126,10 +116,9 @@ float UMySatCoord::StrToFloat(FString strNum) {
 }
 
 //This function scales down the Ephemeris Coordinates
-float UMySatCoord::ProcessCoord(float preProcess) {
-	return preProcess /= 12000.0f;
+float UMySatCoord::ProcessCoord(float ephemeris) {
+	return ephemeris /= 12000.0f;
 }
-
 
 TArray<FVector> UMySatCoord::GetSpecificSatInfo(FString satName) {
 	return *satDatabase.Find(satName);

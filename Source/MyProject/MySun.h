@@ -20,16 +20,12 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	void UpdateSunLocation();
 
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
 	float angle = 0.0f;
-	float timerRate;
+	float speedModifier;
 	FVector rotate;
-	FVector newLocation;
 	FTimerHandle timerHandle;
-
 };

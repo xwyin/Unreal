@@ -3,17 +3,21 @@
 #include "MyGameInstance.h"
 #include "MySatCoord.h"
 
+
+//Default Constructor for game instance --> Creates a UMySatCoord Object
 UMyGameInstance::UMyGameInstance() {
-	UE_LOG(LogTemp, Warning, TEXT("Gameinstance constructor"));
 	satDatabase = NewObject<UMySatCoord>();
 }
 
 UMySatCoord* UMyGameInstance::GetSatDatabase() {
-	UE_LOG(LogTemp, Warning, TEXT("Gameinstance return db"));
 	return satDatabase;
 }
 
-float UMyGameInstance::GetTimerRate() {
-	return 10.0f;
+float UMyGameInstance::GetSpeedModifier() {
+	return speedModifier;
+}
+
+float UMyGameInstance::SetSpeedModifier(float timerRateInput) {
+	return speedModifier = timerRateInput;
 }
 

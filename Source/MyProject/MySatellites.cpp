@@ -18,25 +18,21 @@ AMySatellites::AMySatellites()
 void AMySatellites::BeginPlay()
 {
 	Super::BeginPlay();
-	int8 timerCalled = 0;
 	UMyGameInstance* instance = Cast<UMyGameInstance>(GetGameInstance());
+
 	if (instance){
-		instance->GetSatDatabase()->ReadAllFiles();
 		satDatabase = instance->GetSatDatabase()->GetSpecificSatInfo(GetName());
-		UE_LOG(LogTemp, Warning, TEXT("Name of Actor: %s"), *GetName());
-		timerRate = instance->GetTimerRate();
+		timerRate = instance->GetSpeedModifier();
 	}
+
 	GetWorldTimerManager().SetTimer(timerHandle, this, &AMySatellites::UpdateSatLocation, timerRate, true, 0.0f);
-	
 	rotationAxis = FVector::CrossProduct(GetActorForwardVector(), satDatabase[0] - GetActorLocation());
 	rotationAxis.Normalize();
-	
 }
 
 // Called every frame
 void AMySatellites::Tick(float DeltaTime)
 {
-	
 	Super::Tick(DeltaTime);
 
 	alpha = GetWorldTimerManager().GetTimerElapsed(timerHandle) / timerRate;
@@ -58,14 +54,13 @@ void AMySatellites::Tick(float DeltaTime)
 	FQuat quat(rotationAxis, angle);
 	AddActorLocalRotation(quat);
 	SetActorLocation(newLocation);
-	
 }
 
 void AMySatellites::UpdateSatLocation() {
-	
 	if (i == satDatabase.Num() - 2) {
 		GetWorldTimerManager().ClearTimer(timerHandle);
 		i = 0;
+		//to be implemented, throw warning at user end of coordinates data, prompt for restart or exit
 	}
 	else {
 		i++;
