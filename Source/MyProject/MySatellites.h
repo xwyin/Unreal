@@ -18,6 +18,9 @@ public:
 	AMySatellites();
 	float timerRate;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Satellite | Center")
+	AActor* centralObject;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -25,8 +28,6 @@ protected:
 	int32 i = 0; 
 	float alpha;
 	FVector newLocation;
-	FVector centerEarth = FVector(0,0,0);
-	FVector rotationAxis;
 	FTimerHandle timerHandle;
 
 	void UpdateSatLocation();

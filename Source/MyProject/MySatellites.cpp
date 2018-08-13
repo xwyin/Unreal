@@ -21,13 +21,14 @@ void AMySatellites::BeginPlay()
 	UMyGameInstance* instance = Cast<UMyGameInstance>(GetGameInstance());
 
 	if (instance){
+		instance->GetSatDatabase()->ReadAllFiles();
 		satDatabase = instance->GetSatDatabase()->GetSpecificSatInfo(GetName());
 		timerRate = instance->GetSpeedModifier();
 	}
 
 	GetWorldTimerManager().SetTimer(timerHandle, this, &AMySatellites::UpdateSatLocation, timerRate, true, 0.0f);
-	rotationAxis = FVector::CrossProduct(GetActorForwardVector(), satDatabase[0] - GetActorLocation());
-	rotationAxis.Normalize();
+	FVector facingDir = centralObject->GetActorLocation() - GetActorLocation();
+	SetActorRotation(facingDir.ToOrientationQuat());
 }
 
 // Called every frame
@@ -37,22 +38,16 @@ void AMySatellites::Tick(float DeltaTime)
 
 	alpha = GetWorldTimerManager().GetTimerElapsed(timerHandle) / timerRate;
 	newLocation = FMath::Lerp(satDatabase[i], satDatabase[i + 1], alpha);
+	
 
-	FVector prevDir = centerEarth - GetActorLocation();
-	FVector newDir = centerEarth - newLocation;
-
-	FRotator preRot = centerEarth.Rotation() - GetActorRotation();
-	FRotator newRot = centerEarth.Rotation() - newLocation.Rotation();
-
-	preRot.Normalize();
-	newRot.Normalize();
+	FVector prevDir = GetActorLocation() - centralObject->GetActorLocation();
+	FVector newDir = newLocation - centralObject->GetActorLocation();
 
 	prevDir.Normalize();
 	newDir.Normalize();
 
-	float angle = FMath::Acos((FVector::DotProduct(prevDir, newDir)));
-	FQuat quat(rotationAxis, angle);
-	AddActorLocalRotation(quat);
+	FQuat quat = FQuat::FindBetweenVectors(prevDir, newDir);
+	AddActorWorldRotation(quat);
 	SetActorLocation(newLocation);
 }
 

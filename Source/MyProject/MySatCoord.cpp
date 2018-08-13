@@ -25,7 +25,7 @@ void UMySatCoord::ReadAllFiles() {
 	fileManager.FindFiles(fileNames, *path, true, false);
 
 	for (int8 i = 0; i < fileNames.Num(); i++) {
-		FString fullPath = FPaths::Combine(FPaths::ProjectDir(), TEXT("STKOutputData/"), fileNames[i]);
+		FString fullPath = FPaths::Combine(FPaths::ProjectDir(), TEXT("STKOutputData/")) + fileNames[i];
 		SaveSatInfo(fullPath);
 	}
 }
