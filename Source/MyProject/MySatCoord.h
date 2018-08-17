@@ -6,6 +6,8 @@
 #include "UObject/NoExportTypes.h"
 #include "MySatCoord.generated.h"
 
+class UMyLoadConfig;
+
 UCLASS(Blueprintable,BlueprintType)
 class MYPROJECT_API UMySatCoord : public UObject
 {

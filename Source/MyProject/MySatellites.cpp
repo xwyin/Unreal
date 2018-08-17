@@ -2,7 +2,6 @@
 
 #include "MySatellites.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "Components/SphereComponent.h"
 #include "Engine/EngineTypes.h"
 #include "CoreMinimal.h"
 

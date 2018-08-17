@@ -7,6 +7,7 @@
 #include "HAL/PlatformFilemanager.h"
 #include "HAL/FileManagerGeneric.h"
 #include "Containers/UnrealString.h"
+#include "MyLoadConfig.h"
 #include <sstream>    
 #include <string>
 
@@ -19,13 +20,17 @@ void UMySatCoord::ReadAllFiles() {
 	TArray<FString> fileNames;
 	FFileManagerGeneric fileManager;
 	fileManager.SetSandboxEnabled(true);
+
 	FString identifier = FString("*.sa");
-	FString path = FPaths::Combine(FPaths::ProjectDir(), TEXT("STKOutputData"), identifier);
+
+	UMyLoadConfig *loadConfig = NewObject<UMyLoadConfig>();
+	FString path = FPaths::Combine(loadConfig->GetSaPath(), identifier);
 
 	fileManager.FindFiles(fileNames, *path, true, false);
+	UE_LOG(LogTemp, Warning, TEXT("FullPath: %d"), fileNames.Num());
 
 	for (int8 i = 0; i < fileNames.Num(); i++) {
-		FString fullPath = FPaths::Combine(FPaths::ProjectDir(), TEXT("STKOutputData/")) + fileNames[i];
+		FString fullPath = FPaths::Combine(loadConfig->GetSaPath(), fileNames[i]);
 		SaveSatInfo(fullPath);
 	}
 }

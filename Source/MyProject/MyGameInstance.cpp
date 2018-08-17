@@ -2,6 +2,7 @@
 
 #include "MyGameInstance.h"
 #include "MySatCoord.h"
+#include "MyLoadConfig.h"
 
 
 //Default Constructor for game instance --> Creates a UMySatCoord Object
