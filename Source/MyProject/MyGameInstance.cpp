@@ -7,7 +7,9 @@
 
 //Default Constructor for game instance --> Creates a UMySatCoord Object
 UMyGameInstance::UMyGameInstance() {
+	UE_LOG(LogTemp, Warning, TEXT("Construct UMySatCoord Object from MyGameInstance"));
 	satDatabase = NewObject<UMySatCoord>();
+	satDatabase->ReadAllFiles();
 }
 
 UMySatCoord* UMyGameInstance::GetSatDatabase() {

@@ -20,7 +20,7 @@ void AMySatellites::BeginPlay()
 	UMyGameInstance* instance = Cast<UMyGameInstance>(GetGameInstance());
 
 	if (instance){
-		instance->GetSatDatabase()->ReadAllFiles();
+		UE_LOG(LogTemp, Warning, TEXT("Getting info from SatDatabase"));
 		satDatabase = instance->GetSatDatabase()->GetSpecificSatInfo(GetName());
 		timerRate = instance->GetSpeedModifier();
 	}
@@ -37,7 +37,6 @@ void AMySatellites::Tick(float DeltaTime)
 
 	alpha = GetWorldTimerManager().GetTimerElapsed(timerHandle) / timerRate;
 	newLocation = FMath::Lerp(satDatabase[i], satDatabase[i + 1], alpha);
-	
 
 	FVector prevDir = GetActorLocation() - centralObject->GetActorLocation();
 	FVector newDir = newLocation - centralObject->GetActorLocation();

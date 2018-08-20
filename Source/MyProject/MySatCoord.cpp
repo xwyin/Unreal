@@ -13,10 +13,12 @@
 
 IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
 
-/* This function picks up all the .sa files from folder "/Unreal/STKOutputData" 
-** Then calls SaveSatInfo() to save info for each file
+/* 
+**This function picks up all the .sa files from path specified by user using config file "SaPath.ini"
+**Then calls SaveSatInfo() to save info for each file
 */
 void UMySatCoord::ReadAllFiles() {
+	UE_LOG(LogTemp, Warning, TEXT("Calling ReadAllFiles()"));
 	TArray<FString> fileNames;
 	FFileManagerGeneric fileManager;
 	fileManager.SetSandboxEnabled(true);
@@ -27,7 +29,7 @@ void UMySatCoord::ReadAllFiles() {
 	FString path = FPaths::Combine(loadConfig->GetSaPath(), identifier);
 
 	fileManager.FindFiles(fileNames, *path, true, false);
-	UE_LOG(LogTemp, Warning, TEXT("FullPath: %d"), fileNames.Num());
+	UE_LOG(LogTemp, Warning, TEXT("This many files: %d"), fileNames.Num());
 
 	for (int8 i = 0; i < fileNames.Num(); i++) {
 		FString fullPath = FPaths::Combine(loadConfig->GetSaPath(), fileNames[i]);
@@ -126,5 +128,7 @@ float UMySatCoord::ProcessCoord(float ephemeris) {
 }
 
 TArray<FVector> UMySatCoord::GetSpecificSatInfo(FString satName) {
-	return *satDatabase.Find(satName);
+	TArray<FVector> *result = satDatabase.Find(satName);
+	checkf(result, TEXT("Return specific sat failed"));
+	return *result;
 }
