@@ -16,6 +16,7 @@ class MYPROJECT_API UMySatCoord : public UObject
 public:
 
 	TMap<FString, TArray<FVector>> satDatabase; //final map where information of all satellites are stored
+	TArray<FString> fileNames;
 
 	UFUNCTION(BlueprintCallable)
 		void ReadAllFiles();

@@ -3,8 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "MyGameInstance.h"
 #include "MySatCoord.h"
+#include "MyGameInstance.h"
 #include "Public/TimerManager.h"
 #include "GameFramework/Actor.h"
 #include "MySatellites.generated.h"

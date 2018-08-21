@@ -1,13 +1,13 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "MySatCoord.h"
+#include "MyLoadConfig.h"
 #include "Misc/FileHelper.h"
 #include "Misc/Paths.h"
 #include "GenericPlatform/GenericPlatform.h"
 #include "HAL/PlatformFilemanager.h"
 #include "HAL/FileManagerGeneric.h"
 #include "Containers/UnrealString.h"
-#include "MyLoadConfig.h"
 #include <sstream>    
 #include <string>
 
@@ -19,7 +19,6 @@ IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
 */
 void UMySatCoord::ReadAllFiles() {
 	UE_LOG(LogTemp, Warning, TEXT("Calling ReadAllFiles()"));
-	TArray<FString> fileNames;
 	FFileManagerGeneric fileManager;
 	fileManager.SetSandboxEnabled(true);
 
@@ -132,3 +131,4 @@ TArray<FVector> UMySatCoord::GetSpecificSatInfo(FString satName) {
 	checkf(result, TEXT("Return specific sat failed"));
 	return *result;
 }
+
