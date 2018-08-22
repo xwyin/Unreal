@@ -7,9 +7,10 @@
 #include "MyGameInstance.h"
 #include "Public/TimerManager.h"
 #include "GameFramework/Actor.h"
+#include "Engine/StaticMesh.h"
 #include "MySatellites.generated.h"
 
-UCLASS()
+UCLASS(Blueprintable, BlueprintType)
 class MYPROJECT_API AMySatellites : public AActor
 {
 	GENERATED_BODY()
@@ -18,8 +19,14 @@ public:
 	AMySatellites();
 	float timerRate;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Satellite | Name")
+		FString satName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Satellite | Mesh")
+		UStaticMeshComponent* satMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Satellite | Center")
-	AActor* centralObject;
+		AActor* centralObject;
 
 protected:
 	// Called when the game starts or when spawned

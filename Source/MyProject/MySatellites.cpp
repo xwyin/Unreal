@@ -21,7 +21,8 @@ void AMySatellites::BeginPlay()
 
 	if (instance){
 		UE_LOG(LogTemp, Warning, TEXT("Getting info from SatDatabase"));
-		satDatabase = instance->GetSatDatabase()->GetSpecificSatInfo(GetName());
+		UE_LOG(LogTemp, Warning, TEXT("satName: %s"), *satName);
+		satDatabase = instance->GetSatDatabase()->GetSpecificSatInfo(satName);
 		timerRate = instance->GetSpeedModifier();
 	}
 

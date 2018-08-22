@@ -64,7 +64,7 @@ void UMySatCoord::SaveSatInfo(FString path) {
 		}
 	}
 	satDatabase.Add(satName, inputCoord);
-	
+
 	//UE_LOG(LogTemp, Warning, TEXT("Size of InputCoord: %i"), inputCoord.Num());
 	//UE_LOG(LogTemp, Warning, TEXT("This many sat: %i"), satDatabase.Num());
 	//UE_LOG(LogTemp, Warning, TEXT("SatName: %s"), *satName);
@@ -130,5 +130,14 @@ TArray<FVector> UMySatCoord::GetSpecificSatInfo(FString satName) {
 	TArray<FVector> *result = satDatabase.Find(satName);
 	checkf(result, TEXT("Return specific sat failed"));
 	return *result;
+}
+
+TMap<FString, FArrayWrapper> UMySatCoord::GetAllSatInfo() {
+	TMap<FString, FArrayWrapper> wrappedMap;
+	for(auto& Elem : satDatabase)
+	{
+		wrappedMap.Add(Elem.Key, FArrayWrapper(Elem.Value));
+	}
+	return wrappedMap;
 }
 

@@ -12,7 +12,7 @@ class MYPROJECT_API UMyGameInstance : public UGameInstance
 	GENERATED_BODY()
 
 protected:
-		UPROPERTY()
+		UPROPERTY(BlueprintReadOnly)
 			class UMySatCoord* satDatabase;
 		
 public:
