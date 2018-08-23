@@ -2,6 +2,10 @@
 
 #include "MyGameInstance.h"
 #include "MySatCoord.h"
+#include "Engine.h"
+#include "Runtime/Engine/Public/EngineUtils.h"
+#include "GameFramework/Actor.h"
+#include "Engine/StaticMeshActor.h"
 #include "MyLoadConfig.h"
 
 
@@ -22,5 +26,26 @@ float UMyGameInstance::GetSpeedModifier() {
 
 float UMyGameInstance::SetSpeedModifier(float timerRateInput) {
 	return speedModifier = timerRateInput;
+}
+
+void UMyGameInstance::FindCentralObject() {
+	UE_LOG(LogTemp, Warning, TEXT("Calling FindCentralObject()"));
+
+	UWorld* wp = GEngine->GetWorld();
+	checkf(wp, TEXT("World Does not exist"));
+
+	for (TActorIterator<AActor> ActorItr(wp); ActorItr; ++ActorItr) {
+		AActor *Mesh = *ActorItr;
+		UE_LOG(LogTemp, Warning, TEXT("ActorName %s"), *ActorItr->GetName());
+		if (ActorItr->GetName() == FString("Earth")) {
+			UE_LOG(LogTemp, Warning, TEXT("Central Object Found"));
+			centralObject = Mesh;
+		}
+	}
+	UE_LOG(LogTemp, Warning, TEXT("Finished Searching for Central Object"));
+}
+
+AActor* UMyGameInstance::GetCentralObject() {
+	return centralObject;
 }
 

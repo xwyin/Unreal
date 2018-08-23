@@ -8,6 +8,7 @@
 #include "Public/TimerManager.h"
 #include "GameFramework/Actor.h"
 #include "Engine/StaticMesh.h"
+#include "Engine/StaticMeshActor.h"
 #include "MySatellites.generated.h"
 
 UCLASS(Blueprintable, BlueprintType)
@@ -28,17 +29,21 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Satellite | Center")
 		AActor* centralObject;
 
+	UFUNCTION(BlueprintCallable)
+		void Initialize();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	TArray<FVector> satDatabase;
+	TArray<FVector> satInfo;
 	int32 i = 0; 
 	float alpha;
 	FVector newLocation;
+	FVector centerEarth = FVector(0.0, 0.0, 0.0);
+	bool isReady = false;
 	FTimerHandle timerHandle;
-
 	void UpdateSatLocation();
-	
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

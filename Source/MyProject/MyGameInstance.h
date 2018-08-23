@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
+#include "GameFramework/Actor.h"
 #include "MyGameInstance.generated.h"
 
 UCLASS(Blueprintable)
@@ -18,10 +19,18 @@ protected:
 public:
 		UMyGameInstance();
 		float speedModifier = 0.05f; //default 60.0f for real time updates, scales down to fastforward
+		
+		UPROPERTY(BlueprintReadOnly)
+		AActor* centralObject;
 
 		UFUNCTION(BlueprintCallable)
 			class UMySatCoord* GetSatDatabase();
-			float GetSpeedModifier();
-			float SetSpeedModifier(float userInputModifier);
+
+		UFUNCTION(BlueprintCallable)
+			void FindCentralObject();
+
+		float GetSpeedModifier();
+		float SetSpeedModifier(float userInputModifier);
+		AActor* GetCentralObject();
 };
 

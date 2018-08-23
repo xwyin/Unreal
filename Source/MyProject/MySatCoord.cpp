@@ -127,9 +127,14 @@ float UMySatCoord::ProcessCoord(float ephemeris) {
 }
 
 TArray<FVector> UMySatCoord::GetSpecificSatInfo(FString satName) {
+	UE_LOG(LogTemp, Warning, TEXT("Called GetSpecificSatInfo()"));
 	TArray<FVector> *result = satDatabase.Find(satName);
 	checkf(result, TEXT("Return specific sat failed"));
 	return *result;
+}
+
+TMap<FString, TArray<FVector>> UMySatCoord::GetAllSatInfoNoWrap() {
+	return satDatabase;
 }
 
 TMap<FString, FArrayWrapper> UMySatCoord::GetAllSatInfo() {

@@ -44,6 +44,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 		TMap<FString, FArrayWrapper> GetAllSatInfo();
 
+	TMap<FString, TArray<FVector>> GetAllSatInfoNoWrap();
 protected:
 
 	UFUNCTION(BlueprintCallable)
