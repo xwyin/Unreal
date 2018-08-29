@@ -1,6 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+
 #include "MySatCoord.h"
+#include "Engine.h"
 #include "MyLoadConfig.h"
 #include "Misc/FileHelper.h"
 #include "Misc/Paths.h"
@@ -11,6 +13,7 @@
 #include <sstream>    
 #include <string>
 
+
 IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
 
 /* 
@@ -18,7 +21,7 @@ IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
 **Then calls SaveSatInfo() to save info for each file
 */
 void UMySatCoord::ReadAllFiles() {
-	UE_LOG(LogTemp, Warning, TEXT("Calling ReadAllFiles()"));
+	//UE_LOG(LogTemp, Warning, TEXT("Calling ReadAllFiles()"));
 	FFileManagerGeneric fileManager;
 	fileManager.SetSandboxEnabled(true);
 
@@ -28,7 +31,7 @@ void UMySatCoord::ReadAllFiles() {
 	FString path = FPaths::Combine(loadConfig->GetSaPath(), identifier);
 
 	fileManager.FindFiles(fileNames, *path, true, false);
-	UE_LOG(LogTemp, Warning, TEXT("This many files: %d"), fileNames.Num());
+	//UE_LOG(LogTemp, Warning, TEXT("This many files: %d"), fileNames.Num());
 
 	for (int8 i = 0; i < fileNames.Num(); i++) {
 		FString fullPath = FPaths::Combine(loadConfig->GetSaPath(), fileNames[i]);
@@ -52,6 +55,10 @@ void UMySatCoord::SaveSatInfo(FString path) {
 	}
 	
 	for (int32 i = 0; i < arr.Num(); i++) {
+		if (arr[i] == "BEGIN Ephemeris") {
+			//UE_LOG(LogTemp, Warning, TEXT("Time: %s"), *arr[i + 4]);
+			startTime = ParseTime(arr[i+4]);
+		}
 		if (arr[i] == "EphemerisTimePosVel") {
 			startParse = true;
 		}
@@ -123,11 +130,11 @@ float UMySatCoord::StrToFloat(FString strNum) {
 
 //This function scales down the Ephemeris Coordinates
 float UMySatCoord::ProcessCoord(float ephemeris) {
-	return ephemeris /= 12000.0f;
+	return ephemeris /= 6000.0f;
 }
 
 TArray<FVector> UMySatCoord::GetSpecificSatInfo(FString satName) {
-	UE_LOG(LogTemp, Warning, TEXT("Called GetSpecificSatInfo()"));
+	//UE_LOG(LogTemp, Warning, TEXT("Called GetSpecificSatInfo()"));
 	TArray<FVector> *result = satDatabase.Find(satName);
 	checkf(result, TEXT("Return specific sat failed"));
 	return *result;
@@ -146,3 +153,75 @@ TMap<FString, FArrayWrapper> UMySatCoord::GetAllSatInfo() {
 	return wrappedMap;
 }
 
+FDateTime UMySatCoord::ParseTime(FString lineI) {
+
+	lineI += FString(" ");
+
+	//Need to optimize this.. use C++ libraries like boost
+	MonthMap.Add(FString("Jan"), FString("01"));
+	MonthMap.Add(FString("Feb"), FString("02"));
+	MonthMap.Add(FString("Mar"), FString("03"));
+	MonthMap.Add(FString("Apr"), FString("04"));
+	MonthMap.Add(FString("May"), FString("05"));
+	MonthMap.Add(FString("Jun"), FString("06"));
+	MonthMap.Add(FString("Jul"), FString("07"));
+	MonthMap.Add(FString("Aug"), FString("08"));
+	MonthMap.Add(FString("Sep"), FString("09"));
+	MonthMap.Add(FString("Oct"), FString("10"));
+	MonthMap.Add(FString("Nov"), FString("11"));
+	MonthMap.Add(FString("Dec"), FString("12"));
+
+	int8 arrayIndex = 0;
+	int32 dayInt;
+	FString tempString;
+	FString day;
+	FString month;
+	FString year;
+	FString time;
+	FString sStartTime;
+	FString left;
+	FString right;
+
+	for (char c : lineI) {
+		if (c != ' ') {
+			tempString += c;
+		}
+		else {
+			switch (arrayIndex) {
+			case 0:
+				break;
+			case 12:
+				//UE_LOG(LogTemp, Warning, TEXT("day: %s"), *tempString);
+				//dayInt = static_cast<int8>(std::stoi(TCHAR_TO_UTF8(*tempString)));
+				dayInt = FCString::Atoi(*tempString);
+				if (dayInt < 10) {
+					day = FString("0") + FString::FromInt(dayInt);
+				}
+				break;
+			case 13:
+				//UE_LOG(LogTemp, Warning, TEXT("month: %s"), *tempString);
+				month = *MonthMap.Find(tempString);
+				break;
+			case 14:
+				//UE_LOG(LogTemp, Warning, TEXT("year: %s"), *tempString);
+				year = tempString;
+				break;
+			case 15:
+				//UE_LOG(LogTemp, Warning, TEXT("time: %s"), *tempString);
+				tempString.Split(TEXT("."), &left, &right);
+				time = left;
+				break;
+			}
+			arrayIndex++;
+			tempString = FString("");
+		}
+	}
+	sStartTime = year + '.' + month + '.' + day + '-' + time;
+	UE_LOG(LogTemp, Warning, TEXT("Time in String format: %s"), *sStartTime);
+	FDateTime::Parse(sStartTime, startTime);
+	return startTime;
+}
+
+FDateTime UMySatCoord::GetStartTime() {
+	return startTime;
+}

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "MySatCoord.h"
 #include "GameFramework/Actor.h"
 #include "Public/TimerManager.h"
 #include "MyGameInstance.h" 
@@ -20,6 +21,9 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	FVector FindStartLocation();
+	FDateTime startTime;
+	FVector radius;
 
 public:	
 	// Called every frame
@@ -27,5 +31,6 @@ public:
 	float angle = 0.0f;
 	float speedModifier;
 	FVector rotate;
+	FVector startLocation;
 	FTimerHandle timerHandle;
 };

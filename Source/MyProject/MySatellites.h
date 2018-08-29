@@ -20,17 +20,14 @@ public:
 	AMySatellites();
 	float timerRate;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Satellite | Name")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Satellite | Name", Meta = (ExposeOnSpawn=true))
 		FString satName;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Satellite | Mesh")
-		UStaticMeshComponent* satMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Satellite | Mesh", Meta = (ExposeOnSpawn = true))
+		UStaticMesh* satMesh;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Satellite | Center")
 		AActor* centralObject;
-
-	UFUNCTION(BlueprintCallable)
-		void Initialize();
 
 protected:
 	// Called when the game starts or when spawned
@@ -40,8 +37,8 @@ protected:
 	float alpha;
 	FVector newLocation;
 	FVector centerEarth = FVector(0.0, 0.0, 0.0);
-	bool isReady = false;
 	FTimerHandle timerHandle;
+	UStaticMeshComponent* satMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
 	void UpdateSatLocation();
 
 public:	

@@ -11,7 +11,7 @@
 
 //Default Constructor for game instance --> Creates a UMySatCoord Object
 UMyGameInstance::UMyGameInstance() {
-	UE_LOG(LogTemp, Warning, TEXT("Construct UMySatCoord Object from MyGameInstance"));
+	//UE_LOG(LogTemp, Warning, TEXT("Construct UMySatCoord Object from MyGameInstance"));
 	satDatabase = NewObject<UMySatCoord>();
 	satDatabase->ReadAllFiles();
 }
@@ -29,7 +29,7 @@ float UMyGameInstance::SetSpeedModifier(float timerRateInput) {
 }
 
 void UMyGameInstance::FindCentralObject() {
-	UE_LOG(LogTemp, Warning, TEXT("Calling FindCentralObject()"));
+	//UE_LOG(LogTemp, Warning, TEXT("Calling FindCentralObject()"));
 
 	UWorld* wp = GEngine->GetWorld();
 	checkf(wp, TEXT("World Does not exist"));
@@ -42,7 +42,7 @@ void UMyGameInstance::FindCentralObject() {
 			centralObject = Mesh;
 		}
 	}
-	UE_LOG(LogTemp, Warning, TEXT("Finished Searching for Central Object"));
+	//UE_LOG(LogTemp, Warning, TEXT("Finished Searching for Central Object"));
 }
 
 AActor* UMyGameInstance::GetCentralObject() {

@@ -11,7 +11,7 @@ class AMyProjectPawn : public APawn
 	GENERATED_BODY()
 
 	/** StaticMesh component that will be the visuals for our flying pawn */
-	UPROPERTY(Category = Mesh, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(Category = Mesh, VisibleDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* PlaneMesh;
 
 	/** Spring arm that will offset the camera */

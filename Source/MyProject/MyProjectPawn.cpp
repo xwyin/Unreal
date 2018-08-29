@@ -16,7 +16,7 @@ AMyProjectPawn::AMyProjectPawn()
 	{
 		ConstructorHelpers::FObjectFinderOptional<UStaticMesh> PlaneMesh;
 		FConstructorStatics()
-			: PlaneMesh(TEXT("/Game/Flying/Meshes/UFO.UFO"))
+			: PlaneMesh(TEXT("/Game/MyProject/Assets/SatelliteMeshes/PAWN/PAWN.PAWN"))
 		{
 		}
 	};
@@ -25,12 +25,13 @@ AMyProjectPawn::AMyProjectPawn()
 	// Create static mesh component
 	PlaneMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PlaneMesh0"));
 	PlaneMesh->SetStaticMesh(ConstructorStatics.PlaneMesh.Get());	// Set static mesh
+	PlaneMesh->SetWorldScale3D(FVector(0.3, 0.3, 0.3));
 	RootComponent = PlaneMesh;
 
 	// Create a spring arm component
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm0"));
 	SpringArm->SetupAttachment(RootComponent);	// Attach SpringArm to RootComponent
-	SpringArm->TargetArmLength = 160.0f; // The camera follows at this distance behind the character	
+	SpringArm->TargetArmLength = 200.0f; // The camera follows at this distance behind the character	
 	SpringArm->SocketOffset = FVector(0.f,0.f,60.f);
 	SpringArm->bEnableCameraLag = false;	// Do not allow camera to lag
 	SpringArm->CameraLagSpeed = 15.f;
@@ -49,11 +50,11 @@ AMyProjectPawn::AMyProjectPawn()
 	CurrentForwardSpeed = 500.f;
 	*/
 	
-	CurrentForwardSpeed = 0.5f;
-	Acceleration = 1.0f;
-	TurnSpeed = 15.f;
-	MaxSpeed = 0.5f;
-	MinSpeed = 0.5f;
+	CurrentForwardSpeed = 50.f;
+	Acceleration = 300.f;
+	TurnSpeed = 25.f;
+	MaxSpeed =500.f;
+	MinSpeed = 50.f;
 	
 }
 

@@ -34,6 +34,7 @@ public:
 
 	TMap<FString, TArray<FVector>> satDatabase; //final map where information of all satellites are stored
 	TArray<FString> fileNames;
+	FDateTime startTime;
 	
 	UFUNCTION(BlueprintCallable)
 		TArray<FVector> GetSpecificSatInfo(FString satname);
@@ -45,7 +46,11 @@ public:
 		TMap<FString, FArrayWrapper> GetAllSatInfo();
 
 	TMap<FString, TArray<FVector>> GetAllSatInfoNoWrap();
+	FDateTime GetStartTime();
+
 protected:
+
+	TMap<FString, FString> MonthMap;
 
 	UFUNCTION(BlueprintCallable)
 		void SaveSatInfo(FString path);
@@ -53,4 +58,6 @@ protected:
 	void ParseCoord(TArray<FVector> &inputCoord, FString lineI);
 	float StrToFloat(FString sciNum);
 	float ProcessCoord(float ephemeris);
+	FDateTime ParseTime(FString lineI);
+	
 };

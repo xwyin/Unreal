@@ -17,7 +17,9 @@ void AMySun::BeginPlay()
 	UMyGameInstance* instance = Cast<UMyGameInstance>(GetGameInstance());
 	if (instance) {
 		speedModifier = instance->GetSpeedModifier();
+		startTime = instance->GetSatDatabase()->GetStartTime();
 	}
+	
 }
 
 // Called every frame
@@ -30,8 +32,7 @@ void AMySun::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	FVector radius = FVector(0, 2550, 0);
-	FVector newLocation = FVector(0, 0, 0);
+	radius = FVector(800, 0, 0);
 
 	//angle += 360.0f / 86400.0f * (60.0f / speedModifier);
 	angle += 0.25 / speedModifier;
@@ -42,9 +43,28 @@ void AMySun::Tick(float DeltaTime)
 
 	rotate = radius.RotateAngleAxis(angle, FVector(0, 0, 1));
 
+	FVector newLocation = FindStartLocation();
+
 	newLocation.X += rotate.X;
 	newLocation.Y += rotate.Y;
 	newLocation.Z += rotate.Z;
 
 	SetActorLocation(newLocation);
+}
+
+//This function determines the location of the sun based on the start time parsed from .sa file
+FVector AMySun::FindStartLocation() {
+	float timeInSeconds = startTime.GetHour() * 3600.f + startTime.GetMinute() * 60.f + startTime.GetSecond() * 1.f;
+	//float startAngle = (timeInSeconds * 360 / 86400 + 180) % 360;
+	float startAngle =  FMath::Fmod((timeInSeconds * 0.0041667 + 180.0) , 360);
+	float posX = radius.X * FMath::Sin(startAngle); 
+	float posY = radius.X * FMath::Cos(startAngle);
+
+	FVector startLocation;
+
+	startLocation.X = posX;
+	startLocation.Y = posY;
+	startLocation.Z = 0;
+
+	return startLocation;
 }

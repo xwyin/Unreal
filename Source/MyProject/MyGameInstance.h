@@ -18,7 +18,7 @@ protected:
 		
 public:
 		UMyGameInstance();
-		float speedModifier = 0.05f; //default 60.0f for real time updates, scales down to fastforward
+		float speedModifier = 1.0f; //default 60.0f for real time updates, scales down to fastforward
 		
 		UPROPERTY(BlueprintReadOnly)
 		AActor* centralObject;
